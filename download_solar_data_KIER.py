@@ -17,6 +17,9 @@ import pandas as pd
 # API 엔드포인트 (https:// 프로토콜 포함)
 BASE_URL_SOLAR_ENERGY = "https://apis.data.go.kr/B551184/SolarGhiService"  # 일사량 데이터
 BASE_URL_SOLAR_POWER = "https://apis.data.go.kr/B551184/SolarPvService"    # 발전량 예측 데이터
+BASE_URL_SOLAR_ENERGY_realtime = "https://apis.data.go.kr/B551184/SrQtyService"   # 실시간 일사량 데이터 
+BASE_URL_ULVRY = "https://apis.data.go.kr/B551184/UlvryService"   # 실시간 홍반자외선 데이터 
+
 
 # 데이터 저장 디렉토리 (CSV 파일 저장)
 OUTPUT_DIR = "data"
@@ -25,7 +28,8 @@ os.makedirs(OUTPUT_DIR, exist_ok=True)
 # API 타입 정의
 API_TYPE_SOLAR_ENERGY = "solar_energy"  # 태양에너지 시공간 자원정보 서비스
 API_TYPE_SOLAR_POWER = "solar_power"    # 태양광 발전량 예측정보 서비스
-
+API_TYPE_SOLAR_ENERGY_realtime = "SOLAR_ENERGY_realtime_predc"          # 위경도 실시간 일사량 데이터 제공 서비스
+API_TYPE_ULVRY = "ulvry_predc"          # 위경도 실시간 홍반자외선 데이터 제공 서비스
 
 def download_solar_data(year, month, day, lat, lon, api_type=API_TYPE_SOLAR_ENERGY):
     """
@@ -47,6 +51,10 @@ def download_solar_data(year, month, day, lat, lon, api_type=API_TYPE_SOLAR_ENER
         url = f"{BASE_URL_SOLAR_ENERGY}/getSolarGhiHrInfo"
     elif api_type == API_TYPE_SOLAR_POWER:
         url = f"{BASE_URL_SOLAR_POWER}/getSolarPvHrInfo" 
+    elif api_type == API_TYPE_SOLAR_ENERGY_realtime:
+        url = f"{BASE_URL_SOLAR_ENERGY_realtime}/getSrQtyPredcInfo" 
+    elif api_type == API_TYPE_ULVRY:
+        url = f"{BASE_URL_ULVRY}/getUlvryPredcInfo" 
     else:
         return None
     
@@ -64,6 +72,7 @@ def download_solar_data(year, month, day, lat, lon, api_type=API_TYPE_SOLAR_ENER
         response = requests.get(url, params=params, timeout=30, verify=True)
         response.raise_for_status()
         data = response.json()
+        print(data)
         return data
     except Exception as e:
         return None
@@ -85,7 +94,7 @@ def parse_api_response(data):
         pass
     return rows
 
-def download_target_data_2021_2022(api_type=API_TYPE_SOLAR_ENERGY, years=[2021, 2022], lat=None, lon=None):
+def download_target_annual_data(api_type=API_TYPE_SOLAR_ENERGY, years=[2021, 2022], lat=None, lon=None):
     """
     대상지의 지정된 연도 전체 데이터를 다운로드하고 CSV로 저장합니다.
     
@@ -100,7 +109,12 @@ def download_target_data_2021_2022(api_type=API_TYPE_SOLAR_ENERGY, years=[2021, 
     if lon is None:
         lon = TARGET_LON
     
-    prefix = "solar_energy" if api_type == API_TYPE_SOLAR_ENERGY else "solar_power"
+    prefix = "solar_energy" 
+    if api_type is not None : 
+        prefix = api_type
+    else : 
+        prefix = "solar_power"
+        
     all_rows = []
     
     # 지정된 연도 데이터 다운로드
@@ -145,6 +159,55 @@ def download_target_data_2021_2022(api_type=API_TYPE_SOLAR_ENERGY, years=[2021, 
     
     return all_rows
 
+def download_target_daily_data(year, month, day, api_type=API_TYPE_SOLAR_ENERGY, lat=None, lon=None):
+    """
+    특정 날짜의 데이터를 다운로드하고 CSV로 저장합니다.
+    
+    Args:
+        year: 연도 (예: 2026)
+        month: 월 (1-12)
+        day: 일 (1-31)
+        api_type: API 타입
+        lat: 위도
+        lon: 경도
+    
+    Returns:
+        list: 다운로드된 데이터 행 리스트
+    """
+    if lat is None:
+        lat = TARGET_LAT
+    if lon is None:
+        lon = TARGET_LON
+    
+    prefix = "solar_energy" 
+    if api_type is not None : 
+        prefix = api_type
+    else : 
+        prefix = "solar_power"
+    
+    print(f"{year}-{month:02d}-{day:02d} 데이터 다운로드 중...", end=" ")
+    data = download_solar_data(year, month, day, lat, lon, api_type)
+    
+    rows = []
+    if data:
+        rows = parse_api_response(data)
+        row_count = len(rows)
+        if row_count > 0:
+            for row in rows:
+                row['year'] = year
+                row['month'] = month
+                row['day'] = day
+            filename = f"{OUTPUT_DIR}/{prefix}_{year}_{month:02d}_{day:02d}.csv"
+            df = pd.DataFrame(rows)
+            df.to_csv(filename, index=False, encoding='utf-8-sig')
+            print(f"완료 ({row_count}행) - 저장: {filename}")
+        else:
+            print("실패 (행 0개)")
+    else:
+        print("실패")
+    
+    return rows
+
 
 # 사용 예시:
 
@@ -155,6 +218,9 @@ SERVICE_KEY = "YOUR_SERVICE_KEY_HERE"
 TARGET_LAT = 36.349
 TARGET_LON = 127.386
 
-download_target_data_2021_2022(API_TYPE_SOLAR_ENERGY, [2021, 2022], lat=TARGET_LAT, lon=TARGET_LON)
-download_target_data_2021_2022(API_TYPE_SOLAR_POWER, [2021, 2022], lat=TARGET_LAT, lon=TARGET_LON)
+download_target_annual_data(API_TYPE_SOLAR_ENERGY, [2021, 2022], lat=TARGET_LAT, lon=TARGET_LON)
+download_target_annual_data(API_TYPE_SOLAR_POWER, [2021, 2022], lat=TARGET_LAT, lon=TARGET_LON)
+# 실시간 일사량, 홍반자외선 추가 (1월 20일 하루만 다운로드)
+download_target_daily_data(2026, 1, 20, API_TYPE_SOLAR_ENERGY_realtime, lat=TARGET_LAT, lon=TARGET_LON)
+download_target_daily_data(2026, 1, 20, API_TYPE_ULVRY, lat=TARGET_LAT, lon=TARGET_LON)
 

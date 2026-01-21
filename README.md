@@ -18,6 +18,14 @@
    - 스크립트: `download_solar_data_KIER.py`
    - 참고 문서: `태양광 발전량 예측정보 서비스 소개 (한국에너지기술연구원).pdf`
 
+3. **위경도 실시간 일사량 데이터 제공 서비스** (실시간 일사량 데이터)
+   - 제공 기관: 한국에너지기술연구원(KIER)
+   - 스크립트: `download_solar_data_KIER.py`
+
+4. **위경도 실시간 홍반자외선 데이터 제공 서비스** (실시간 홍반자외선 데이터)
+   - 제공 기관: 한국에너지기술연구원(KIER)
+   - 스크립트: `download_solar_data_KIER.py`
+
 ### 외부 기관 자료
 
 3. **기상청 ASOS 지상관측 자료**
@@ -61,9 +69,11 @@ pip install -r requirements.txt
 
 #### KIER API (공공데이터포털)
 1. [공공데이터포털](https://www.data.go.kr)에 회원가입 및 로그인
-2. 다음 두 API 서비스에 활용신청:
+2. 다음 API 서비스에 활용신청:
    - [태양에너지 시공간 자원정보 서비스](https://www.data.go.kr/data/15125092/openapi.do#/)
    - [태양광 발전량 예측정보 서비스](https://www.data.go.kr/data/15125094/openapi.do)
+   - 위경도 실시간 일사량 데이터 제공 서비스
+   - 위경도 실시간 홍반자외선 데이터 제공 서비스
 3. 발급받은 서비스 키를 `download_solar_data_KIER.py` 파일의 `SERVICE_KEY`에 입력
 
 #### 기상청 API
@@ -97,11 +107,23 @@ ASOS_STN_ID = 133  # 대전 지점
 ### 데이터 다운로드
 
 ```python
-# KIER 태양에너지 데이터 다운로드 (2021~2022년)
-from download_solar_data_KIER import download_target_data_2021_2022, API_TYPE_SOLAR_ENERGY, API_TYPE_SOLAR_POWER
+# KIER 태양에너지 데이터 다운로드
+from download_solar_data_KIER import (
+    download_target_annual_data, 
+    download_target_daily_data,
+    API_TYPE_SOLAR_ENERGY, 
+    API_TYPE_SOLAR_POWER,
+    API_TYPE_SOLAR_ENERGY_realtime,
+    API_TYPE_ULVRY
+)
 
-download_target_data_2021_2022(API_TYPE_SOLAR_ENERGY, [2021, 2022])
-download_target_data_2021_2022(API_TYPE_SOLAR_POWER, [2021, 2022])
+# 연도 전체 데이터 다운로드 (2021~2022년)
+download_target_annual_data(API_TYPE_SOLAR_ENERGY, [2021, 2022], lat=36.349, lon=127.386)
+download_target_annual_data(API_TYPE_SOLAR_POWER, [2021, 2022], lat=36.349, lon=127.386)
+
+# 특정 날짜 데이터 다운로드 (실시간 일사량, 홍반자외선)
+download_target_daily_data(2026, 1, 20, API_TYPE_SOLAR_ENERGY_realtime, lat=36.349, lon=127.386)
+download_target_daily_data(2026, 1, 20, API_TYPE_ULVRY, lat=36.349, lon=127.386)
 
 # 기상청 ASOS 데이터 다운로드
 from download_asos_data_KMA import download_asos_data_by_station
@@ -129,8 +151,11 @@ download_era5_data(2021, 1, 1, area=[36.5, 127.3, 36.2, 127.5])
 `data/` 디렉토리에 CSV 파일로 저장됩니다:
 
 ### KIER 데이터
-- 월별 파일: `solar_energy_2021_01.csv`, `solar_power_2021_01.csv`, ...
-- 전체 요약 파일: `solar_energy_2021_2022_summary.csv`
+- 연도 전체 데이터 (annual_data 함수):
+  - 월별 파일: `solar_energy_2021_01.csv`, `solar_power_2021_01.csv`, ...
+  - 전체 요약 파일: `solar_energy_2021_2022_summary.csv`
+- 일별 데이터 (daily_data 함수):
+  - 일별 파일: `SOLAR_ENERGY_realtime_predc_2026_01_20.csv`, `ulvry_predc_2026_01_20.csv`, ...
 
 ### 기상청 데이터
 - ASOS: `ASOS_{지점번호}_{연도}_{월}.csv`
