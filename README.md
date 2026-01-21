@@ -25,12 +25,7 @@
    - [API 페이지](https://data.kma.go.kr/api/selectApiDetail.do?pgmNo=42&openApiNo=241)
    - 스크립트: `download_asos_data_KMA.py`
 
-4. **기상청 LDAPS 수치예보 자료**
-   - 제공 기관: 기상청(KMA)
-   - LDAPS (Local Data Assimilation and Prediction System): 지역 수치예보 모델
-   - 스크립트: `download_ldaps_data_KMA.py`
-
-5. **ECMWF ERA5 재분석 자료**
+4. **ECMWF ERA5 재분석 자료**
    - 제공 기관: ECMWF (European Centre for Medium-Range Weather Forecasts)
    - [CDS 페이지](https://cds.climate.copernicus.eu/)
    - ERA5-Land: 지상 재분석 데이터
@@ -74,8 +69,7 @@ pip install -r requirements.txt
 #### 기상청 API
 1. [기상청 API Hub](https://apihub.kma.go.kr/)에서 계정 생성
 2. ASOS API: [API 상세 페이지](https://data.kma.go.kr/api/selectApiDetail.do?pgmNo=42&openApiNo=241)
-3. LDAPS API: 기상청 API Hub에서 인증 키 발급
-4. 발급받은 키를 각 스크립트의 `AUTH_KEY` 또는 `SERVICE_KEY`에 입력
+3. 발급받은 키를 각 스크립트의 `AUTH_KEY` 또는 `SERVICE_KEY`에 입력
 
 #### ECMWF CDS API
 1. [CDS 웹사이트](https://cds.climate.copernicus.eu/)에서 계정 생성
@@ -95,11 +89,6 @@ TARGET_LON = 127.38453
 SERVICE_KEY = "YOUR_SERVICE_KEY_HERE"
 ASOS_STN_ID = 133  # 대전 지점
 
-# download_ldaps_data_KMA.py
-AUTH_KEY = "YOUR_AUTH_KEY_HERE"
-TARGET_LAT = 36.3504
-TARGET_LON = 127.38453
-```
 
 ## 📖 사용 방법
 
@@ -118,11 +107,6 @@ download_target_data_2021_2022(API_TYPE_SOLAR_POWER, [2021, 2022])
 from download_asos_data_KMA import download_asos_data_by_station
 
 download_asos_data_by_station(stn_id=133, start_date='2021-01-01', end_date='2022-12-31')
-
-# 기상청 LDAPS 데이터 다운로드
-from download_ldaps_data_KMA import download_ldaps_data_by_date_range
-
-download_ldaps_data_by_date_range('2021-01-01', '2022-12-31', lat=36.3504, lon=127.38453)
 
 # ECMWF ERA5 데이터 다운로드
 from download_era5_data_ECMWF import download_era5_data
@@ -150,7 +134,6 @@ download_era5_data(2021, 1, 1, area=[36.5, 127.3, 36.2, 127.5])
 
 ### 기상청 데이터
 - ASOS: `ASOS_{지점번호}_{연도}_{월}.csv`
-- LDAPS: `LDAPS_{위도}_{경도}_{연도}_{월}.csv`
 
 ### ECMWF 데이터
 - ERA5: `era5_land_YYYYMMDD.nc` (NetCDF 형식)
@@ -161,21 +144,18 @@ download_era5_data(2021, 1, 1, area=[36.5, 127.3, 36.2, 127.5])
 public2025_KIERREBD_github/
 ├── download_solar_data_KIER.py      # KIER 태양에너지 데이터 다운로드
 ├── download_asos_data_KMA.py        # 기상청 ASOS 데이터 다운로드
-├── download_ldaps_data_KMA.py       # 기상청 LDAPS 데이터 다운로드
 ├── download_era5_data_ECMWF.py     # ECMWF ERA5 데이터 다운로드
 ├── example_estimation_solar_power.py    # 발전량 추정 모델 (LightGBM, XGBoost)
 ├── example_forecast_solar_power.py      # 시계열 예측 모델 (ARIMA, LSTM, Transformer)
 ├── README.md                        # 프로젝트 설명서
 ├── requirements.txt                 # Python 패키지 의존성
 ├── 태양광 발전량 예측정보 서비스 소개 (한국에너지기술연구원).pdf  # KIER 서비스 소개 문서
-├── data/                            # 다운로드된 데이터 (자동 생성)
-│   ├── solar_energy_*.csv
-│   ├── solar_power_*.csv
-│   ├── ASOS_*.csv
-│   ├── LDAPS_*.csv
-│   └── era5_*.nc
-└── data_base/                       # 변수 매핑 테이블 등
-    └── ldaps_api_varn.csv
+└── data/                            # 다운로드된 데이터 (자동 생성)
+    ├── solar_energy_*.csv
+    ├── solar_power_*.csv
+    ├── ASOS_*.csv
+    └── era5_*.nc
+
 ```
 
 ## ⚠️ 주의사항
