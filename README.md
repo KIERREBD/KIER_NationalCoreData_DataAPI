@@ -26,6 +26,13 @@
    - 제공 기관: 한국에너지기술연구원(KIER)
    - 스크립트: `download_solar_data_KIER.py`
 
+5. **천리안2 위성영상 격자 좌표 데이터** (`Ird_LatLon.csv`)
+   - 제공 기관: 한국에너지기술연구원(KIER)
+   - 설명: 천리안2 위성영상의 격자 중 육상에 대한 부분만 추출한 위경도 위치 데이터
+   - 파일 형식: CSV (Lat, Lon 컬럼)
+   - 데이터 개수: 약 38만 개의 위경도 좌표
+   - 용도: API 호출 시 사용할 수 있는 육상 격자 좌표 목록
+
 ### 외부 기관 자료
 
 3. **기상청 ASOS 지상관측 자료**
@@ -172,6 +179,7 @@ public2025_KIERREBD_github/
 ├── download_era5_data_ECMWF.py     # ECMWF ERA5 데이터 다운로드
 ├── example_estimation_solar_power.py    # 발전량 추정 모델 (LightGBM, XGBoost)
 ├── example_forecast_solar_power.py      # 시계열 예측 모델 (ARIMA, LSTM, Transformer)
+├── Ird_LatLon.csv                  # 천리안2 위성영상 격자 좌표 데이터 (육상 격자)
 ├── README.md                        # 프로젝트 설명서
 ├── requirements.txt                 # Python 패키지 의존성
 ├── 태양광 발전량 예측정보 서비스 소개 (한국에너지기술연구원).pdf  # KIER 서비스 소개 문서
