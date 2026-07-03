@@ -11,8 +11,8 @@
 - XGBoost
 
 학습/테스트 분할:
-- 훈련: 2021년 데이터
-- 테스트: 2022년 데이터
+- 훈련: 2020년 데이터
+- 테스트: 2021년 데이터
 """
 
 import pandas as pd
@@ -459,8 +459,8 @@ print("태양광 발전량 예측 모델 학습 및 평가")
 print("="*60)
 
 # 데이터 준비
-train_df = prepare_model_data(2021, ASOS_STN_ID)
-test_df = prepare_model_data(2022, ASOS_STN_ID)
+train_df = prepare_model_data(2020, ASOS_STN_ID)
+test_df = prepare_model_data(2021, ASOS_STN_ID)
 
 if train_df.empty or test_df.empty:
     print("\n오류: 훈련 또는 테스트 데이터가 비어있습니다.")
