@@ -170,26 +170,24 @@ download_era5_data(2021, 1, 1, area=[36.5, 127.3, 36.2, 127.5])
 ### ECMWF 데이터
 - ERA5: `era5_land_YYYYMMDD.nc` (NetCDF 형식)
 
-## 📊 프로젝트 구조
+## 📊 프로젝트 구조 및 파일 목록
 
-```
-public2025_KIERREBD_github/
-├── download_solar_data_KIER.py      # KIER 태양에너지 데이터 다운로드
-├── download_asos_data_KMA.py        # 기상청 ASOS 데이터 다운로드
-├── download_era5_data_ECMWF.py     # ECMWF ERA5 데이터 다운로드
-├── example_estimation_solar_power.py    # 발전량 추정 모델 (LightGBM, XGBoost)
-├── example_forecast_solar_power.py      # 시계열 예측 모델 (ARIMA, LSTM, Transformer)
-├── Ird_LatLon.csv                  # 천리안2 위성영상 격자 좌표 데이터 (육상 격자)
-├── README.md                        # 프로젝트 설명서
-├── requirements.txt                 # Python 패키지 의존성
-├── 태양광 발전량 예측정보 서비스 소개 (한국에너지기술연구원).pdf  # KIER 서비스 소개 문서
-└── data/                            # 다운로드된 데이터 (자동 생성)
-    ├── solar_energy_*.csv
-    ├── solar_power_*.csv
-    ├── ASOS_*.csv
-    └── era5_*.nc
+크기·라인 수는 2026-07-21 기준.
 
-```
+| 파일 | 라인 | 크기 | 설명 |
+|---|--:|--:|---|
+| `download_solar_data_KIER.py` | 226 | 8K | KIER 4개 API 다운로드 (일사량·발전량·실시간 일사량·홍반자외선) |
+| `download_asos_data_KMA.py` | 163 | 8K | 기상청 ASOS 지상관측 다운로드 |
+| `download_era5_data_ECMWF.py` | 128 | 8K | ECMWF ERA5 / ERA5-Land 다운로드 |
+| `example_estimation_solar_power.py` | 486 | 16K | 발전량 추정 모델 (LightGBM, XGBoost) |
+| `example_forecast_solar_power.py` | 360 | 16K | 시계열 예측 모델 (ARIMA, LSTM, Transformer) |
+| `Ird_LatLon.csv` | 383,691 | 14M | 천리안2 위성영상 육상 격자 위경도 (약 38만 점) |
+| `requirements.txt` | 10 | 159B | Python 패키지 의존성 |
+| `태양광 발전량 예측정보 서비스 소개 (한국에너지기술연구원).pdf` | — | 2.8M | KIER 서비스 소개 문서 |
+| `LICENSE` | — | 12K | 라이선스 |
+| `README.md` | — | — | 프로젝트 설명서 |
+
+> 📌 다운로드 결과 CSV/NetCDF 는 스크립트 실행 시 `data/` 에 생성됩니다 (저장소에는 포함하지 않음).
 
 ## ⚠️ 주의사항
 
