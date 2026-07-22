@@ -170,6 +170,31 @@ download_era5_data(2021, 1, 1, area=[36.5, 127.3, 36.2, 127.5])
 ### ECMWF 데이터
 - ERA5: `era5_land_YYYYMMDD.nc` (NetCDF 형식)
 
+## 📐 응답 칼럼 및 단위
+
+다운로드된 CSV의 주요 칼럼과 단위입니다.
+
+### 일사량 (`solar_energy_*.csv`)
+
+| 칼럼 | 의미 | 단위 |
+|---|---|---|
+| `Date` / `time` | 날짜(YYYY-MM-DD) / 시각(HH:MM, KST) | — |
+| `lat` / `lon` | 위도 / 경도 (WGS84) | degree(°) |
+| `ghi` | 수평면 전일사량 (Global Horizontal Irradiance) | **W/m²** (시간 평균) |
+| `cghi` | 청천(clear-sky) 수평면 전일사량 (구름 없는 이론 최대) | **W/m²** |
+
+### 발전량 (`solar_power_*.csv`)
+
+| 칼럼 | 의미 | 단위 |
+|---|---|---|
+| `Date` / `time` | 날짜 / 시각(KST) | — |
+| `lat` / `lon` | 위도 / 경도 | degree(°) |
+| `pvAmt` | 시간당 예측 발전량 | **kWh (설비용량 1kWp 기준 정규화값, kWh/kWp)** |
+
+> **`pvAmt`** 는 API 입력에 설비용량이 없고 위경도만 받으므로, 특정 발전소의 절대 발전량이 아니라
+> **1kWp 설비 기준으로 정규화된 시간당 발전량**입니다. 실제 설비용량 `P[kW]` 를 곱해 환산하세요:
+> `발전량[kWh] = pvAmt × P`.
+
 ## 📊 프로젝트 구조 및 파일 목록
 
 크기·라인 수는 2026-07-21 기준.
